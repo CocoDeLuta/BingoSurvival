@@ -89,30 +89,38 @@ public class Weapon : MonoBehaviour
 
 
     // Chamado pelo FireMode
-    public void SpawnProjectile(Vector3 direction, float damage)
+    public void SpawnProjectile(Vector3 direction, float finalDamage)
     {
         // Raycast ou projétil físico
         //print("Spawned projectile with damage: " + damage);
         Camera cam = Camera.main;
-
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 1f);
+
+        int mask = LayerMask.GetMask("Enemy Body", "Enemy Head");
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, mask))
         {
-            Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
-
-            // if (hit.collider.TryGetComponent(out Enemy enemy))
-            // {
-            //     enemy.TakeDamage(finalDamage);
-            // }
+            if (hit.collider.TryGetComponent(out EnemyHitbox hitbox))
+            {
+                hitbox.ApplyDamage(finalDamage);
+            }
         }
-
     }
 
     public void UpdateAmmoUI()
     {
         int inventoryAmmo = inventory.GetAmmo(Data.ammoType);
         OnAmmoChanged?.Invoke(currentAmmo, inventoryAmmo);
+    }
+
+    void Update()
+    {
+        Camera cam = Camera.main;
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
+
+
     }
 
 }

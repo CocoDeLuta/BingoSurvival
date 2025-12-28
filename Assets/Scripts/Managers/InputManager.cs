@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
     public InteractionDetector interactionDetector;
     public Weapon weapon;
     public bool IsFiring { get; private set; }
+
     private void Awake()
     {
         if (Instance == null)
@@ -36,6 +37,9 @@ public class InputManager : MonoBehaviour
         onFoot.Fire.canceled += ctx => IsFiring = false;
 
         onFoot.Reload.started += ctx => weapon.TryReload();
+
+        onFoot.Sprint.started += ctx => playerMovement.IsSprinting = true;
+        onFoot.Sprint.canceled += ctx => playerMovement.IsSprinting = false;
     }
 
     private void FixedUpdate()
